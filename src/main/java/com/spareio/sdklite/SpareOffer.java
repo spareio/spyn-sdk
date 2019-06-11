@@ -1,5 +1,6 @@
 package com.spareio.sdklite;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -13,7 +14,10 @@ public class SpareOffer extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_spare_offer);
 
-        spareSdk = new SDKLite(this);
+        Intent intent = getIntent();
+        String dealId = intent.getStringExtra(SDKLite.EXTRA_DEALID);
+
+        spareSdk = new SDKLite(this, dealId);
     }
 
     @Override

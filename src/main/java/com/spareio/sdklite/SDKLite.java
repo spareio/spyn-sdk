@@ -36,11 +36,17 @@ public class SDKLite {
     private String deviceStatus = "";
     private String baseUrl = "https://x.devspare.io/api/v1/launcher/workers/";
     private String playstoreUrl = "";
+    private String dealId = "";
+    private JSONObject workerPayload = null;
+    private JSONObject work = null;
 
-    public SDKLite(Context context) {
+    public static final String EXTRA_DEALID = "com.spareio.spareiodemopartnerapp.extra.DEALID";
+
+    public SDKLite(Context context, String dealId) {
         mContext = context;
         setMachineId();
         getWorker();
+        this.dealId = dealId;
     }
 
 
@@ -59,8 +65,13 @@ public class SDKLite {
 
     public String getPlaystoreUrl() { return playstoreUrl; }
 
+    public String getWorkresult() { return work.toString(); }
+
+    public JSONObject getWorkerPayload() { return workerPayload; }
+
     public void launchSpareOffer() {
         Intent intent = new Intent(mContext, SpareOffer.class);
+        intent.putExtra(EXTRA_DEALID, dealId);
         mContext.startActivity(intent);
     }
 
@@ -73,11 +84,10 @@ public class SDKLite {
     }
 
     // Perform device registration
-    public void register(String dealId) {
+    public void register() {
         RequestQueue queue = Volley.newRequestQueue(mContext);
 
-        JSONObject json = getRegisterVars(dealId);
-        Log.d("Register vars", json.toString());
+        JSONObject json = getRegisterVars(this.dealId);
         JsonObjectRequest jsonobj = new JsonObjectRequest(Request.Method.POST, baseUrl, json,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -87,6 +97,8 @@ public class SDKLite {
                             Log.d("Response", response.toString());
                             setDeviceStatus(response.getString("state"));
                             playstoreUrl = response.getString("app_url");
+                            workerPayload = response;
+                            getWork();
                         } catch (Exception e) {
                             Log.d("Exception", "Failed to register");
                             Log.d("Exception", e.toString());
@@ -137,7 +149,7 @@ public class SDKLite {
                             switch(response.statusCode){
                                 case 400: case 412: case 404:
                                     json = new String(response.data);
-                                    Log.w("Volley Error", json.toString());
+                                    Log.w("Volley Error", json);
                                     break;
                             }
                         }
@@ -215,6 +227,44 @@ public class SDKLite {
         queue.add(stringRequest);
     }
 
+    // Make Rejected call
+    public void getWork() {
+        String url = baseUrl + getMachineId() + "/work/";
+        RequestQueue queue = Volley.newRequestQueue(mContext);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // Display the first 500 characters of the response string.
+                        Log.d("Payload", response);
+                        try {
+                            work = new JSONObject(response);
+                        } catch (JSONException e) {
+                            Log.d("Message", e.toString());
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        String json;
+
+                        NetworkResponse response = error.networkResponse;
+                        if(response != null && response.data != null){
+                            switch(response.statusCode){
+                                case 400: case 412: case 404:
+                                    json = new String(response.data);
+                                    Log.w("Volley Error", json);
+                                    break;
+                            }
+                        }
+                    }
+                }
+        );
+        queue.add(stringRequest);
+    }
+
     // Get device status
     private void getWorker() {
         String url = baseUrl + getMachineId();
@@ -244,6 +294,7 @@ public class SDKLite {
                             switch(response.statusCode){
                                 case 400: case 412: case 404:
                                     setDeviceStatus("unregistered");
+                                    register();
                                     break;
                             }
                         }
