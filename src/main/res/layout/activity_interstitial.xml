@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Interstitial">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/interstitialbackground"
+        android:text=""
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageView
+        android:id="@+id/medalIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="164dp"
+        android:layout_marginLeft="24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/medalicon" />
+
+    <ImageView
+        android:id="@+id/searchIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="366dp"
+        android:layout_marginLeft="24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/searchicon" />
+
+    <ImageView
+        android:id="@+id/settingsIcon"
+        android:layout_width="26dp"
+        android:layout_height="22dp"
+        android:layout_marginTop="276dp"
+        android:layout_marginLeft="24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/settingsicon" />
+
+    <TextView
+        android:id="@+id/interstitialRewardsTitle"
+        android:layout_width="258dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="144dp"
+        android:layout_marginLeft="78dp"
+        android:text="@string/interstitialRewardsTitle"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:fontFamily="@font/avenirnextbold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/interstitialRewardsBody"
+        android:layout_width="258dp"
+        android:layout_height="97dp"
+        android:layout_marginTop="164dp"
+        android:layout_marginLeft="78dp"
+        android:textColor="#CCFFFFFF"
+        android:text="@string/interstitialRewardsBody"
+        android:fontFamily="@font/avenirnextbold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/interstitialCustomTitle"
+        android:layout_width="258dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="256dp"
+        android:layout_marginLeft="78dp"
+        android:text="@string/interstitialCustomTitle"
+        android:fontFamily="@font/avenirnextbold"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/interstitialCustomBody"
+        android:layout_width="258dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="276dp"
+        android:layout_marginLeft="78dp"
+        android:fontFamily="@font/avenirnextbold"
+        android:textSize="14sp"
+        android:textColor="#CCFFFFFF"
+        android:text="@string/interstitialCustomBody"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/interstitialSearchTitle"
+        android:layout_width="258dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="348dp"
+        android:layout_marginLeft="78dp"
+        android:fontFamily="@font/avenirnextbold"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:text="@string/interstitialSearchTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/interstitialSearchBody"
+        android:layout_width="258dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="368dp"
+        android:layout_marginLeft="78dp"
+        android:fontFamily="@font/avenirnextbold"
+        android:textColor="#CCFFFFFF"
+        android:text="@string/interstitialSearchBody"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent" android:layout_height="fill_parent"
+        android:gravity="center_horizontal">
+
+        <TextView
+            android:id="@+id/interstitialTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/avenirnextbold"
+            android:text="@string/interstitialTitle"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp"
+            android:paddingTop="80dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerInParent="true" />
+
+        <ImageButton
+            android:id="@+id/continueButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:onClick="acceptOffer"
+            android:layout_centerInParent="true"
+            android:layout_alignParentBottom="true"
+            android:paddingBottom="25dp"
+            app:srcCompat="@drawable/continuebutton" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/loadingPanel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="-45dp">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true" />
+    </RelativeLayout>
+
+</android.support.constraint.ConstraintLayout>
