@@ -3,7 +3,9 @@
     package="com.spareio.spynsdk">
 
     <application>
-        <activity android:name=".Interstitial"></activity>
+        <activity android:name=".Success"></activity>
+        <activity android:name=".StartScreen" />
+        <activity android:name=".Interstitial" />
     </application>
 
 </manifest>
