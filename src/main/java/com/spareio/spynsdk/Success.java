@@ -1,5 +1,6 @@
 package com.spareio.spynsdk;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +15,7 @@ public class Success extends AppCompatActivity {
     }
 
     public void openSpyn(View view) {
-        Log.d("Message", "Spyn should open");
+        Intent intent = getApplicationContext().getPackageManager().getLaunchIntentForPackage("com.spare.spyn");
+        getApplicationContext().startActivity(intent);
     }
 }

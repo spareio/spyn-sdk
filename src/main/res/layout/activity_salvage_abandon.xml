@@ -6,84 +6,91 @@
     android:layout_height="match_parent"
     tools:context=".SalvageAbandon">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/interstitialbackground"
-        android:text=""
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
-
-    <ImageButton
-        android:id="@+id/closeScreen"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:src="@drawable/deleteicon"
-        android:background="@null"
-        android:onClick="closeScreen"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/whoopsGraphic"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="64dp"
-        android:layout_marginTop="52dp"
-        android:src="@drawable/whoopsgraphic"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="420dp"
-        android:layout_height="731dp"
-        android:gravity="center_horizontal"
-        tools:layout_editor_absoluteX="-9dp"
-        tools:layout_editor_absoluteY="0dp">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical">
 
         <TextView
-            android:id="@+id/whoopsTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerInParent="true"
-            android:layout_marginTop="265dp"
-            android:fontFamily="@font/avenirnextbold"
-            android:text="@string/whoopsTitle"
-            android:textColor="#FFFFFF"
-            android:textSize="32sp" />
-
-        <TextView
-            android:id="@+id/whoopsText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerInParent="true"
-            android:layout_marginLeft="24dp"
-            android:layout_marginTop="317dp"
-            android:layout_marginRight="24dp"
-            android:fontFamily="@font/avenirnextbold"
-            android:lineSpacingExtra="8dp"
-            android:text="@string/whoopsText"
-            android:textColor="#CCFFFFFF"
-            android:textSize="16sp" />
+            android:background="@drawable/interstitialbackground"
+            android:text=""
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
 
         <ImageButton
-            android:id="@+id/upgradeButton"
+            android:id="@+id/closeScreen"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerInParent="true"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/deleteicon"
             android:background="@null"
-            android:onClick="acceptOffer"
-            android:paddingBottom="25dp"
-            app:srcCompat="@drawable/upgradewithspyn" />
+            android:onClick="closeOfferOverlay"
+            android:layout_alignParentEnd="true" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="300dp">
+            <ImageView
+                android:id="@+id/whoopsGraphic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="52dp"
+                android:src="@drawable/whoopsgraphic"
+                android:layout_centerInParent="true" />
+        </RelativeLayout>
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="420dp"
+            android:layout_height="731dp"
+            android:gravity="center_horizontal"
+            tools:layout_editor_absoluteX="-9dp"
+            tools:layout_editor_absoluteY="0dp"
+            android:layout_centerHorizontal="true">
+
+            <TextView
+                android:id="@+id/whoopsTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="265dp"
+                android:fontFamily="@font/avenirnextbold"
+                android:text="@string/whoopsTitle"
+                android:textColor="#FFFFFF"
+                android:textSize="32sp" />
+
+            <TextView
+                android:id="@+id/whoopsText"
+                android:layout_width="320dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="317dp"
+                android:fontFamily="@font/avenirnextbold"
+                android:lineSpacingExtra="8dp"
+                android:text="@string/whoopsText"
+                android:textColor="#CCFFFFFF"
+                android:textSize="16sp" />
+
+            <ImageButton
+                android:id="@+id/upgradeButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerInParent="true"
+                android:background="@null"
+                android:onClick="acceptOffer"
+                android:paddingBottom="50dp"
+                app:srcCompat="@drawable/upgradewithspyn" />
+
+        </RelativeLayout>
 
     </RelativeLayout>
 

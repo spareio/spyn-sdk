@@ -3,6 +3,10 @@
     package="com.spareio.spynsdk">
 
     <application>
+        <provider
+            android:name=".SpynContentProvider"
+            android:authorities="com.spareio.spynSDK.provider"
+            android:exported="true" />
         <activity android:name=".Success"></activity>
         <activity android:name=".StartScreen" />
         <activity android:name=".Interstitial" />
