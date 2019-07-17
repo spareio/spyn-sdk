@@ -22,7 +22,6 @@ public class Interstitial extends AppCompatActivity {
         String dealId = intent.getStringExtra(spynSDK.EXTRA_DEALID);
 
         spynSDK = new spynSDK(this, dealId);
-        findViewById(R.id.loadingPanel).setVisibility(View.GONE);
     }
 
     @Override
@@ -37,7 +36,6 @@ public class Interstitial extends AppCompatActivity {
     }
 
     public void launchPlayStore(View view) {
-        findViewById(R.id.loadingPanel).setVisibility(View.VISIBLE);
         String url = spynSDK.getPlaystoreUrl();
         Intent i = new Intent(Intent.ACTION_VIEW);
         i.setData(Uri.parse(url));

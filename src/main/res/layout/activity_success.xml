@@ -6,72 +6,84 @@
     android:layout_height="match_parent"
     tools:context=".Success">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/interstitialbackground"
-        android:text=""
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
-
-    <ImageView
-        android:id="@+id/whoopsGraphic"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="64dp"
-        android:layout_marginTop="52dp"
-        android:src="@drawable/successgraphic"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="420dp"
-        android:layout_height="731dp"
-        android:gravity="center_horizontal"
-        tools:layout_editor_absoluteX="-9dp"
-        tools:layout_editor_absoluteY="0dp">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical">
 
         <TextView
-            android:id="@+id/successTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerInParent="true"
-            android:layout_marginTop="265dp"
-            android:fontFamily="@font/avenirnextbold"
-            android:text="@string/successTitle"
-            android:textColor="#FFFFFF"
-            android:textSize="32sp" />
+            android:background="@drawable/interstitialbackground"
+            android:text=""
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
 
-        <TextView
-            android:id="@+id/usccessText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerInParent="true"
-            android:layout_marginLeft="24dp"
-            android:layout_marginTop="317dp"
-            android:layout_marginRight="24dp"
-            android:fontFamily="@font/avenirnextbold"
-            android:lineSpacingExtra="8dp"
-            android:text="@string/successText"
-            android:textColor="#CCFFFFFF"
-            android:textSize="16sp" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="250dp">
 
-        <ImageButton
-            android:id="@+id/successButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerInParent="true"
-            android:background="@null"
-            android:onClick="openSpyn"
-            android:paddingBottom="25dp"
-            app:srcCompat="@drawable/successbutton" />
+            <ImageView
+                android:id="@+id/whoopsGraphic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="52dp"
+                android:layout_gravity="center"
+                android:src="@drawable/successgraphic"
+                android:layout_centerInParent="true" />
+
+        </RelativeLayout>
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="420dp"
+            android:layout_height="731dp"
+            android:gravity="center"
+            tools:layout_editor_absoluteX="-9dp"
+            tools:layout_editor_absoluteY="0dp">
+
+            <TextView
+                android:id="@+id/successTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="265dp"
+                android:fontFamily="@font/avenirnextbold"
+                android:text="@string/successTitle"
+                android:textColor="#FFFFFF"
+                android:textSize="32sp" />
+
+            <TextView
+                android:id="@+id/successText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="40dp"
+                android:layout_marginTop="317dp"
+                android:layout_marginRight="40dp"
+                android:fontFamily="@font/avenirnextbold"
+                android:lineSpacingExtra="8dp"
+                android:text="@string/successText"
+                android:textColor="#CCFFFFFF"
+                android:textSize="16sp" />
+
+            <ImageButton
+                android:id="@+id/successButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerInParent="true"
+                android:background="@null"
+                android:onClick="openSpyn"
+                android:paddingBottom="50dp"
+                app:srcCompat="@drawable/successbutton" />
+
+        </RelativeLayout>
 
     </RelativeLayout>
 

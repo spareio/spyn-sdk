@@ -1,15 +1,18 @@
 package com.spareio.spynsdk;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
 import android.preference.PreferenceManager;
+import android.provider.BaseColumns;
 import android.provider.Settings;
 import android.util.Log;
 
@@ -22,10 +25,13 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -44,19 +50,31 @@ public class spynSDK {
 
     public static final String EXTRA_DEALID = "com.spareio.spareiodemopartnerapp.extra.DEALID";
 
+    public static final String AUTHORITY = "com.spareio.spynSDK.provider";
+    public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + AUTHORITY);
+
     public spynSDK(Context context, String dealId) {
         mContext = context;
         setMachineId();
         this.dealId = dealId;
         preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
         editor = preferences.edit();
+        if (getWorker() == null) {
+            register();
+        } else {
+            showStatusMessage("Device already registered\nworker: " + getMachineId());
+        }
+    }
+
+    public void salvageAbandon() {
+        Intent intent = new Intent(mContext, SalvageAbandon.class);
+        mContext.startActivity(intent);
     }
 
     public void offerSpyn() {
         offer();
-        Intent intent = new Intent(mContext, Interstitial.class);
-        intent.putExtra(EXTRA_DEALID, dealId);
-        mContext.startActivity(intent);
+        loadSpynData();
+        getWorkerFromAPI(true);
     }
 
     public void showStatusMessage(String message) {
@@ -64,6 +82,18 @@ public class spynSDK {
         intent.setAction("com.example.ACTION_UPDATE_STATUS");
         intent.putExtra("message", message);
         mContext.sendBroadcast(intent);
+    }
+
+    // Check if Spyn is installed on the device
+    public boolean isAppInstalled() {
+        String packageName = "com.spare.spyn";
+        try {
+            mContext.getPackageManager().getApplicationInfo(packageName, 0);
+            return true;
+        }
+        catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
     }
 
     // Fetch the machineId
@@ -131,6 +161,7 @@ public class spynSDK {
                             editor.putString("worker", response.toString());
                             editor.commit();
                             worker = response;
+                            insertPartnerRecord();
                             showStatusMessage("Registered \nworker: " + getMachineId());
                         } catch (Exception e) {
                             Log.d("Exception", "Failed to register");
@@ -160,6 +191,71 @@ public class spynSDK {
         queue.add(jsonobj);
     }
 
+    // Fetch the worker object from the API
+    public void getWorkerFromAPI(final Boolean doOffer) {
+        String url = baseUrl + getMachineId() + "?secret=" + getSecret();
+        RequestQueue queue = Volley.newRequestQueue(mContext);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // Display the first 500 characters of the response string.
+                        editor.putString("worker", response);
+                        editor.commit();
+                        if (doOffer) {
+                            String[] eventsArray = getEvents();
+                            if (Arrays.asList(eventsArray).contains("activated")) {
+                                Log.d("Message", "it is activated");
+                            } else {
+                                Log.d("Message", "it is not activated");
+                            }
+
+                            if (Arrays.asList(eventsArray).contains("activated")) {
+                                Log.d("Status", "It's activated");
+                                Intent intent = new Intent(mContext, Success.class);
+                                mContext.startActivity(intent);
+                            } else if (Arrays.asList(eventsArray).contains("accepted")) {
+                                if (!isAppInstalled()) {
+                                    // Show interstitial
+                                    Log.d("Status", "Accepted and not installed");
+                                    Intent intent = new Intent(mContext, Interstitial.class);
+                                    intent.putExtra(EXTRA_DEALID, dealId);
+                                    mContext.startActivity(intent);
+                                } else {
+                                    Log.d("Status", "Accepted and installed");
+                                    Intent intent = mContext.getPackageManager().getLaunchIntentForPackage("com.spare.spyn");
+                                    mContext.startActivity(intent);
+                                }
+                            } else {
+                                Log.d("Status", "else");
+                                Intent intent = new Intent(mContext, Interstitial.class);
+                                intent.putExtra(EXTRA_DEALID, dealId);
+                                mContext.startActivity(intent);
+                            }
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        String json;
+
+                        NetworkResponse response = error.networkResponse;
+                        if(response != null && response.data != null){
+                            switch(response.statusCode){
+                                case 400: case 412: case 404:
+                                    json = new String(response.data);
+                                    Log.w("Volley Error", json);
+                                    break;
+                            }
+                        }
+                    }
+                }
+        );
+        queue.add(stringRequest);
+    }
+
     // Make Offered call
     public void offer() {
         String url = baseUrl + getMachineId() + "/offered/?secret=" + getSecret();
@@ -172,6 +268,7 @@ public class spynSDK {
                         // Display the first 500 characters of the response string.
                         Log.d("Offered", "Spare has been offered");
                         showStatusMessage("Offer has been shown to the user");
+                        getWorkerFromAPI(false);
                     }
                 },
                 new Response.ErrorListener() {
@@ -206,6 +303,7 @@ public class spynSDK {
                         // Display the first 500 characters of the response string.
                         Log.d("Accepted", "Spare has been accepted");
                         showStatusMessage("Offer has been accepted the user");
+                        getWorkerFromAPI(false);
                     }
                 },
                 new Response.ErrorListener() {
@@ -240,6 +338,7 @@ public class spynSDK {
                         // Display the first 500 characters of the response string.
                         Log.d("Accepted", "Spare has been rejected");
                         showStatusMessage("Offer has been rejected by the user");
+                        getWorkerFromAPI(false);
                     }
                 },
                 new Response.ErrorListener() {
@@ -319,5 +418,63 @@ public class spynSDK {
         Intent browserIntent = new Intent("android.intent.action.VIEW", Uri.parse("http://"));
         ResolveInfo resolveInfo = mContext.getPackageManager().resolveActivity(browserIntent, PackageManager.MATCH_DEFAULT_ONLY);
         return resolveInfo.activityInfo.packageName;
+    }
+
+    private String[] getEvents() {
+        String[] events;
+        try {
+            JSONArray eventsJson = getWorker().getJSONArray("events");
+            events = new String[eventsJson.length()];
+            for (int i = 0 ; i < eventsJson.length(); i++) {
+                events[i] = eventsJson.getJSONObject(i).getString("event");
+            }
+
+            return events;
+        } catch(Exception e) {
+            Log.d("Exception", e.toString());
+        }
+
+        return new String[0];
+    }
+
+    private void insertPartnerRecord(){
+        ContentValues values = new ContentValues();
+        values.put(spynSDK.SpynPartnerEntry.COLUMN_WORKER,getWorker().toString());
+
+        Uri uri = mContext.getContentResolver().insert(spynSDK.SpynPartnerEntry.CONTENT_URI,values);
+    }
+
+    private void loadSpynData() {
+        String workerValue;
+        Cursor cursor = mContext.getContentResolver()
+                .query(spynSDK.SpynPartnerEntry.CONTENT_URI,null,null,null,null);
+
+        try {
+            if (cursor.moveToFirst()) {
+                try {
+                    workerValue = cursor.getString(cursor.getColumnIndex("worker"));
+                    Log.d("Worker", workerValue);
+                } catch (Exception e) {
+                    Log.d("Exception in load", e.toString());
+                }
+            } else {
+                Log.d("loadSpynData", "No data");
+            }
+        } catch (Exception e) {
+            Log.d("Exception", e.toString());
+        }
+    }
+
+    // Put the workerId in shared resources
+    public static final class SpynPartnerEntry implements BaseColumns {
+        public static final String TABLE_NAME = "SpynPartner";
+        public static final String COLUMN_WORKER = "worker";
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(TABLE_NAME).build();
+
+        public static Uri buildTodoUriWithId(long id) {
+            return CONTENT_URI.buildUpon()
+                    .appendPath(Long.toString(id))
+                    .build();
+        }
     }
 }

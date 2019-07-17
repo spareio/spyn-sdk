@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">spynSDK</string>
-    <string name="offerSpyn">SHOULD NOT SEE THIS</string>
     <string name="interstitialTitle">How it works</string>
     <string name="interstitialRewardsTitle">Get rewards for using Spyn</string>
     <string name="interstitialRewardsBody">The more you use the launcher, the more rewards you\'ll get! Best of all: it\'s absolutely FREE.</string>
