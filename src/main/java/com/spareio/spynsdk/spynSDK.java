@@ -43,6 +43,7 @@ public class spynSDK {
     private String machineId = "";
     private String baseUrl = "https://x.devspare.io/api/v1/launcher/workers/";
     private String dealId = "";
+    private String packageName = "com.spare.spyn";
     private JSONObject worker = null;
 
     private SharedPreferences preferences;
@@ -60,20 +61,25 @@ public class spynSDK {
         preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
         editor = preferences.edit();
         if (getWorker() == null) {
-            register();
+            // check if existing worker, if not we register
+            loadSpynData();
+            if (getWorker() == null) {
+                register();
+            }
         } else {
             showStatusMessage("Device already registered\nworker: " + getMachineId());
         }
     }
 
     public void salvageAbandon() {
+        Log.d("Message", "In salvageabandon");
+        offer();
         Intent intent = new Intent(mContext, SalvageAbandon.class);
         mContext.startActivity(intent);
     }
 
     public void offerSpyn() {
         offer();
-        loadSpynData();
         getWorkerFromAPI(true);
     }
 
@@ -86,7 +92,6 @@ public class spynSDK {
 
     // Check if Spyn is installed on the device
     public boolean isAppInstalled() {
-        String packageName = "com.spare.spyn";
         try {
             mContext.getPackageManager().getApplicationInfo(packageName, 0);
             return true;
@@ -94,6 +99,26 @@ public class spynSDK {
         catch (PackageManager.NameNotFoundException e) {
             return false;
         }
+    }
+
+    public String getStatus() {
+        String[] eventsArray = getEvents();
+        String status = "";
+        if (Arrays.asList(eventsArray).contains("activated")) {
+            status = "activated";
+        } else if (Arrays.asList(eventsArray).contains("accepted")) {
+            status = "accepted";
+        } else if (Arrays.asList(eventsArray).contains("rejected")) {
+            status = "rejected";
+        } else if (Arrays.asList(eventsArray).contains("offered")) {
+            status = "offered";
+        } else if (Arrays.asList(eventsArray).contains("registered")) {
+            status = "registered";
+        } else {
+            status = "unknown";
+        }
+
+        return status;
     }
 
     // Fetch the machineId
@@ -158,6 +183,7 @@ public class spynSDK {
                         try {
                             // Do something here once we have the response
                             Log.d("Registration",  response.toString());
+                            response.put("worker_id", getMachineId());
                             editor.putString("worker", response.toString());
                             editor.commit();
                             worker = response;
@@ -181,6 +207,7 @@ public class spynSDK {
                                 case 400: case 412: case 404:
                                     json = new String(response.data);
                                     Log.w("Volley Error", json);
+                                    getWorkerFromAPI(false);
                                     showStatusMessage("Device already registered\nworker: " + getMachineId());
                                     break;
                             }
@@ -201,34 +228,39 @@ public class spynSDK {
                     @Override
                     public void onResponse(String response) {
                         // Display the first 500 characters of the response string.
+                        try {
+                            JSONObject temp = new JSONObject(response);
+                            temp.put("worker_id", getMachineId());
+                            response = temp.toString();
+                        } catch (Exception e) {
+                            // Do nothing
+                        }
                         editor.putString("worker", response);
                         editor.commit();
                         if (doOffer) {
                             String[] eventsArray = getEvents();
                             if (Arrays.asList(eventsArray).contains("activated")) {
-                                Log.d("Message", "it is activated");
-                            } else {
-                                Log.d("Message", "it is not activated");
-                            }
-
-                            if (Arrays.asList(eventsArray).contains("activated")) {
-                                Log.d("Status", "It's activated");
-                                Intent intent = new Intent(mContext, Success.class);
-                                mContext.startActivity(intent);
-                            } else if (Arrays.asList(eventsArray).contains("accepted")) {
                                 if (!isAppInstalled()) {
-                                    // Show interstitial
-                                    Log.d("Status", "Accepted and not installed");
                                     Intent intent = new Intent(mContext, Interstitial.class);
                                     intent.putExtra(EXTRA_DEALID, dealId);
                                     mContext.startActivity(intent);
                                 } else {
-                                    Log.d("Status", "Accepted and installed");
+                                    Log.d("Status", "It's activated");
+                                    Intent intent = new Intent(mContext, Success.class);
+                                    mContext.startActivity(intent);
+                                }
+
+                            } else if (Arrays.asList(eventsArray).contains("accepted")) {
+                                if (!isAppInstalled()) {
+                                    // Show interstitial
+                                    Intent intent = new Intent(mContext, Interstitial.class);
+                                    intent.putExtra(EXTRA_DEALID, dealId);
+                                    mContext.startActivity(intent);
+                                } else {
                                     Intent intent = mContext.getPackageManager().getLaunchIntentForPackage("com.spare.spyn");
                                     mContext.startActivity(intent);
                                 }
                             } else {
-                                Log.d("Status", "else");
                                 Intent intent = new Intent(mContext, Interstitial.class);
                                 intent.putExtra(EXTRA_DEALID, dealId);
                                 mContext.startActivity(intent);
@@ -247,6 +279,8 @@ public class spynSDK {
                                 case 400: case 412: case 404:
                                     json = new String(response.data);
                                     Log.w("Volley Error", json);
+                                    Log.d("getWorkerFromApi", "got an error, doing register");
+                                    register();
                                     break;
                             }
                         }
@@ -258,6 +292,7 @@ public class spynSDK {
 
     // Make Offered call
     public void offer() {
+        Log.d("Message", "In offer");
         String url = baseUrl + getMachineId() + "/offered/?secret=" + getSecret();
         RequestQueue queue = Volley.newRequestQueue(mContext);
 
@@ -336,7 +371,7 @@ public class spynSDK {
                     @Override
                     public void onResponse(String response) {
                         // Display the first 500 characters of the response string.
-                        Log.d("Accepted", "Spare has been rejected");
+                        Log.d("Rejected", "Spare has been rejected");
                         showStatusMessage("Offer has been rejected by the user");
                         getWorkerFromAPI(false);
                     }
@@ -453,6 +488,8 @@ public class spynSDK {
             if (cursor.moveToFirst()) {
                 try {
                     workerValue = cursor.getString(cursor.getColumnIndex("worker"));
+                    editor.putString("worker", workerValue.toString());
+                    editor.commit();
                     Log.d("Worker", workerValue);
                 } catch (Exception e) {
                     Log.d("Exception in load", e.toString());
