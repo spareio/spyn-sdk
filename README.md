@@ -4,17 +4,33 @@ Spyn Android SDK allows you to offer Spyn Launcher in your own app. SpynSDK is o
 
 # Installation
 
-Download via github:
+- Download the [latest release](https://github.com/spareio/spyn-sdk/releases) of SpynSDK
 
-```shell
-git clone
-```
+- Create a module where the SpynSDK module in your android application
+
+  <kbd>File</kbd> + <kbd>New Module</kbd>
+
+- Configure the new module as follows: Application/Library name: spynSDK Module name: spynsdk
+
+- Copy the the following files from the download SpynSDK to your android application `your/android/app/path/spynsdk` `src` folder `build.gradle` `proguard-rules.pro` `spynsdk.iml`
+
+- Add `spynsdk` module to your android apps 'settings.gradle' file
+
+  ```java
+  include ':app', ':spynsdk'
+  ```
+
+- Add SpynSDK Salvage Abandon screen so your android apps manifest files
+
+  ```xml
+  <activity android:name="com.spareio.spynsdk.SalvageAbandon"> </activity>
+  ```
 
 # Usage Overview
 
 Before you can start the initialization of Spyn SDK, you must first set the Spyn SDK with your `deal id` from your [Partner Portal](https://spare.io).
 
-You must first import SpynSDK in your `MainActivity.java` file
+You must first import SpynSDK in your `Activity` file
 
 ```java
 import com.spareio.spynsdk.Success;

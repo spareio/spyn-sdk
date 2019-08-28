@@ -6,4 +6,4 @@ All notable changes to the SDK are documented in this file.
 
 - Initial SpynSDK release
 - Supports Standard Installation Flow
-- Supports Abondan Installation Flow
+- Supports Abandon Installation Flow
