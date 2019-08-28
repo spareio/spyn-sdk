@@ -56,11 +56,13 @@ Once the user clicks on the download call-to-action, they are taken to the PlayS
 
 Clicking on the "Continue to Spyn" button opens the Spyn Launcher. Once the Spyn Launcher is installed and run for the first time, the deal becomes activated and your app can detect this.
 
-![Standard Flow](./docs/standard-flow.png?raw=true "Stripe Plan")
+![Standard Flow](./docs/standard-flow.png?raw=true "Standard Flow")
 
 ### Salvation Abandon Flow
 
 The Salvation Abandon flow helps capture users who have been sent to the play purchase screen but cancel or fail to pay.
+
+![Abandon Flow](./docs/abandon-flow.png?raw=true "Abandon Flow")
 
 By overriding the `onPurchasesUpdated()` method, Spyn can be offered to users who have failed to purchase, and spyn will be shown after the user returns unsuccessfully from the play purchase screen. Below is an example of how this method can be overridden:
 
@@ -87,9 +89,3 @@ void onPurchasesUpdated(BillingResult billingResult, List<Purchase> purchases) {
 # Changelog
 
 - All notable changes to this project will be documented in [changelog document](https://github.com/spareio/spynsdk/blob/master/CHANGELOG.md).
-
-img[alt$=">"] { float: right; }
-
-img[alt$="<"] { float: left; }
-
-img[alt$="><"] { display: block; max-width: 100%; height: auto; margin: auto; float: none!important; }
