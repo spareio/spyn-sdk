@@ -56,7 +56,7 @@ Once the user clicks on the download call-to-action, they are taken to the PlayS
 
 Clicking on the "Continue to Spyn" button opens the Spyn Launcher. Once the Spyn Launcher is installed and run for the first time, the deal becomes activated and your app can detect this.
 
-![image alt >](./docs/sf-fig-3.png) ![image alt <](./docs/sf-fig-1.png) ![image alt ><](./docs/sf-fig-2.png)
+![Standard Flow](./docs/standard-flow.png?raw=true "Stripe Plan")
 
 ### Salvation Abandon Flow
 
