@@ -98,6 +98,16 @@ void onPurchasesUpdated(BillingResult billingResult, List<Purchase> purchases) {
 }
 ```
 
+# Special Requirements
+Spyn uses an sqlite database locally on each device to store information about the users device and deal. It is important that this information persist in the event that the user deletes your app. If a user uninstalls, and reinstalls, we need to know that this is the same user on the same device. To accomplish this, the sqlite database is included in the standard Android backup procedure. The app therefore needs to have backups enabled in the manifest file. This can be accomplished by using the following code:
+```xml
+<manifest ... >
+    <application android:allowBackup="true">
+    </application>
+</manifest>
+```
+
+
 # Example
 
 # Changelog
