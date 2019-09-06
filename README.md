@@ -8,7 +8,7 @@ Spyn Android SDK allows you to offer Spyn Launcher in your own app. SpynSDK is o
 
 - Create a module where the SpynSDK module in your android application
 
-  <kbd>File</kbd> + <kbd>New Module</kbd>
+  <kbd>File</kbd> + <kbd>Import Module</kbd>
 
 - Configure the new module as follows: Application/Library name: spynSDK Module name: spynsdk
 
