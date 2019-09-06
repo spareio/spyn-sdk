@@ -38,10 +38,15 @@ public class Interstitial extends AppCompatActivity {
         String dealId = intent.getStringExtra(spynSDK.EXTRA_DEALID);
 
         spynSDK = new spynSDK.Builder()
+                .setIcon(getApplicationInfo().loadIcon(getPackageManager()))
                 .setDealId(dealId)
                 .setLang("en")
                 .setContext(this)
                 .create();
+        if (spynSDK.isAppInstalled()) {
+            Intent intent2 = new Intent(getApplicationContext(), Success.class);
+            getApplication().startActivity(intent2);
+        }
     }
 
     @Override
@@ -72,7 +77,6 @@ public class Interstitial extends AppCompatActivity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d("DEBUG"," test for application install/uninstall");
             if (spynSDK.isAppInstalled()) {
                 Intent newintent = new Intent(getApplicationContext(), Success.class);
                 startActivity(newintent);

@@ -17,6 +17,7 @@ import android.provider.BaseColumns;
 import android.provider.Settings;
 import android.util.Log;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -78,6 +79,7 @@ public class spynSDK {
         } else {
             showStatusMessage("Device already registered\nworker: " + getMachineId());
         }
+        this.getDeal();
     }
 
     public void salvageAbandon() {
@@ -108,6 +110,26 @@ public class spynSDK {
         catch (PackageManager.NameNotFoundException e) {
             return false;
         }
+    }
+
+    public String getStatus() {
+        String[] eventsArray = getEvents();
+        String status = "";
+        if (Arrays.asList(eventsArray).contains("activated")) {
+            status = "activated";
+        } else if (Arrays.asList(eventsArray).contains("accepted")) {
+            status = "accepted";
+        } else if (Arrays.asList(eventsArray).contains("rejected")) {
+            status = "rejected";
+        } else if (Arrays.asList(eventsArray).contains("offered")) {
+            status = "offered";
+        } else if (Arrays.asList(eventsArray).contains("registered")) {
+            status = "registered";
+        } else {
+            status = "unknown";
+        }
+
+        return status;
     }
 
     // Fetch the machineId
@@ -229,29 +251,27 @@ public class spynSDK {
                         if (doOffer) {
                             String[] eventsArray = getEvents();
                             if (Arrays.asList(eventsArray).contains("activated")) {
-                                Log.d("Message", "it is activated");
-                            } else {
-                                Log.d("Message", "it is not activated");
-                            }
-
-                            if (Arrays.asList(eventsArray).contains("activated")) {
-                                Log.d("Status", "It's activated");
-                                Intent intent = new Intent(mContext, Success.class);
-                                mContext.startActivity(intent);
-                            } else if (Arrays.asList(eventsArray).contains("accepted")) {
                                 if (!isAppInstalled()) {
-                                    // Show interstitial
-                                    Log.d("Status", "Accepted and not installed");
                                     Intent intent = new Intent(mContext, Interstitial.class);
                                     intent.putExtra(EXTRA_DEALID, dealId);
                                     mContext.startActivity(intent);
                                 } else {
-                                    Log.d("Status", "Accepted and installed");
+                                    Log.d("Status", "It's activated");
+                                    Intent intent = new Intent(mContext, Success.class);
+                                    mContext.startActivity(intent);
+                                }
+
+                            } else if (Arrays.asList(eventsArray).contains("accepted")) {
+                                if (!isAppInstalled()) {
+                                    // Show interstitial
+                                    Intent intent = new Intent(mContext, Interstitial.class);
+                                    intent.putExtra(EXTRA_DEALID, dealId);
+                                    mContext.startActivity(intent);
+                                } else {
                                     Intent intent = mContext.getPackageManager().getLaunchIntentForPackage("com.spare.spyn");
                                     mContext.startActivity(intent);
                                 }
                             } else {
-                                Log.d("Status", "else");
                                 Intent intent = new Intent(mContext, Interstitial.class);
                                 intent.putExtra(EXTRA_DEALID, dealId);
                                 mContext.startActivity(intent);
@@ -362,7 +382,7 @@ public class spynSDK {
                     @Override
                     public void onResponse(String response) {
                         // Display the first 500 characters of the response string.
-                        Log.d("Accepted", "Spare has been rejected");
+                        Log.d("Rejected", "Spare has been rejected");
                         showStatusMessage("Offer has been rejected by the user");
                         getWorkerFromAPI(false);
                     }
@@ -393,16 +413,32 @@ public class spynSDK {
         RequestQueue queue = Volley.newRequestQueue(mContext);
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
+                new Response.Listener<String>()
+                {
                     @Override
                     public void onResponse(String response) {
-                        // Display the first 500 characters of the response string.
+                        // response
                         Log.d("DealInfo", response);
+                        try {
+                            final JSONObject json = new JSONObject(response);
+                            for(int i=0;i<json.getJSONArray("details").length();i++)
+                            {
+                                JSONObject jsonObject = json.getJSONArray("details").getJSONObject(i);
+                                Log.d("Deal Info", jsonObject.toString());
+                                editor.putString(jsonObject.getString("key"), jsonObject.getString("value"));
+                            }
+                            editor.commit();
+                        } catch (Exception e) {
+                            Log.d("Exception", e.toString());
+                        }
+
                     }
                 },
-                new Response.ErrorListener() {
+                new Response.ErrorListener()
+                {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        // TODO Auto-generated method stub
                         String json;
 
                         NetworkResponse response = error.networkResponse;
@@ -416,7 +452,16 @@ public class spynSDK {
                         }
                     }
                 }
-        );
+        ) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String>  params = new HashMap<String, String>();
+                params.put("Accept-Language", lang);
+
+                return params;
+            }
+        };
+
         queue.add(stringRequest);
     }
 
