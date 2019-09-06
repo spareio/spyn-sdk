@@ -34,17 +34,49 @@
             android:onClick="closeOfferOverlay"
             android:layout_alignParentEnd="true" />
 
-        <RelativeLayout
+        <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="300dp">
+            android:layout_height="300dp"
+            android:background="#00FFFFFF">
+
+
             <ImageView
                 android:id="@+id/whoopsGraphic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="52dp"
+                android:layout_marginStart="64dp"
+                android:layout_marginTop="68dp"
+                android:background="#00FFFFFF"
                 android:src="@drawable/whoopsgraphic"
-                android:layout_centerInParent="true" />
-        </RelativeLayout>
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:layout_conversion_absoluteHeight="164dp"
+                tools:layout_conversion_absoluteWidth="276dp" />
+
+            <ImageView
+                android:id="@+id/partnerLogo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintHorizontal_chainStyle="spread"
+                app:layout_constraintHorizontal_weight="50"
+                app:layout_constraintStart_toStartOf="@+id/guideline2"
+                app:layout_constraintTop_toTopOf="@+id/guideline3" />
+
+            <android.support.constraint.Guideline
+                android:id="@+id/guideline2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="86dp" />
+
+            <android.support.constraint.Guideline
+                android:id="@+id/guideline3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_begin="167dp" />
+
+        </android.support.constraint.ConstraintLayout>
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="420dp"
@@ -75,7 +107,7 @@
                 android:layout_marginTop="317dp"
                 android:fontFamily="@font/avenirnextbold"
                 android:lineSpacingExtra="8dp"
-                android:text="@string/whoopsText"
+                android:text=""
                 android:textColor="#CCFFFFFF"
                 android:textSize="16sp" />
 

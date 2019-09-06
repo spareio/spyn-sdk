@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -16,6 +17,7 @@ import android.provider.BaseColumns;
 import android.provider.Settings;
 import android.util.Log;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -30,7 +32,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,11 +41,17 @@ import java.util.UUID;
 public class spynSDK {
 
     private Context mContext;
+
+    private Drawable icon;
+
+    private JSONObject worker = null;
+
     private String machineId = "";
     private String baseUrl = "https://x.devspare.io/api/v1/launcher/workers/";
+    private String dealUrl = "https://x.devspare.io/api/v1/launcher/deals/";
     private String dealId = "";
+    private String lang = "";
     private String packageName = "com.spare.spyn";
-    private JSONObject worker = null;
 
     private SharedPreferences preferences;
     private SharedPreferences.Editor editor;
@@ -54,8 +61,11 @@ public class spynSDK {
     public static final String AUTHORITY = "com.spareio.spynSDK.provider";
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + AUTHORITY);
 
-    public spynSDK(Context context, String dealId) {
-        mContext = context;
+    private spynSDK(final Builder builder) {
+        this.dealId = builder.dealId;
+        this.icon = builder.icon;
+        this.lang = builder.lang;
+        mContext = builder.context;
         setMachineId();
         this.dealId = dealId;
         preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
@@ -69,6 +79,7 @@ public class spynSDK {
         } else {
             showStatusMessage("Device already registered\nworker: " + getMachineId());
         }
+        this.getDeal();
     }
 
     public void salvageAbandon() {
@@ -396,6 +407,64 @@ public class spynSDK {
         queue.add(stringRequest);
     }
 
+    // Call the deal endpoint
+    public void getDeal() {
+        String url = dealUrl + dealId;
+        RequestQueue queue = Volley.newRequestQueue(mContext);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>()
+                {
+                    @Override
+                    public void onResponse(String response) {
+                        // response
+                        Log.d("DealInfo", response);
+                        try {
+                            final JSONObject json = new JSONObject(response);
+                            for(int i=0;i<json.getJSONArray("details").length();i++)
+                            {
+                                JSONObject jsonObject = json.getJSONArray("details").getJSONObject(i);
+                                Log.d("Deal Info", jsonObject.toString());
+                                editor.putString(jsonObject.getString("key"), jsonObject.getString("value"));
+                            }
+                            editor.commit();
+                        } catch (Exception e) {
+                            Log.d("Exception", e.toString());
+                        }
+
+                    }
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO Auto-generated method stub
+                        String json;
+
+                        NetworkResponse response = error.networkResponse;
+                        if(response != null && response.data != null){
+                            switch(response.statusCode){
+                                case 400: case 412: case 404:
+                                    json = new String(response.data);
+                                    Log.w("Volley Error", json);
+                                    break;
+                            }
+                        }
+                    }
+                }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String>  params = new HashMap<String, String>();
+                params.put("Accept-Language", lang);
+
+                return params;
+            }
+        };
+
+        queue.add(stringRequest);
+    }
+
     public JSONObject getRegisterVars(String dealId) {
         JSONObject params = new JSONObject();
 
@@ -512,6 +581,43 @@ public class spynSDK {
             return CONTENT_URI.buildUpon()
                     .appendPath(Long.toString(id))
                     .build();
+        }
+    }
+
+    // Builder class
+    public static class Builder {
+
+        private String lang;
+        private String dealId;
+        private Drawable icon;
+        private Context context;
+
+        public Builder setLang(final String lang) {
+            this.lang = lang;
+            return this;
+        }
+
+        public Builder setDealId(final String dealId) {
+            this.dealId = dealId;
+            return this;
+        }
+
+        public Builder setIcon(final Drawable icon) {
+            this.icon = icon;
+            return this;
+        }
+
+        public Builder setContext(final Context context) {
+            this.context = context;
+            return this;
+        }
+
+        public spynSDK create() {
+            spynSDK spynSDK = new spynSDK(this);
+            if (spynSDK.mContext == null) {
+                throw new IllegalStateException("Context cannot be empty");
+            }
+            return spynSDK;
         }
     }
 }

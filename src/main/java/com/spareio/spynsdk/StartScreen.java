@@ -19,7 +19,12 @@ public class StartScreen extends AppCompatActivity {
         Intent intent = getIntent();
         dealId = intent.getStringExtra(spynSDK.EXTRA_DEALID);
 
-        spynSDK = new spynSDK(this, dealId);
+        spynSDK = new spynSDK.Builder()
+                .setIcon(getApplicationInfo().loadIcon(getPackageManager()))
+                .setDealId(dealId)
+                .setLang("en")
+                .setContext(this)
+                .create();
         if (!spynSDK.isAppInstalled()) {
             Intent intent2 = new Intent(getApplicationContext(), Interstitial.class);
             getApplication().startActivity(intent2);
