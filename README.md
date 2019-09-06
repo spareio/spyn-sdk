@@ -31,7 +31,7 @@ import com.spareio.spynsdk.spynSDK;
 Create a `spynSDK` variable that will be used throughout the code in the desired Activity file
 
 ```java
-private spynSDK spynSDK
+private spynSDK spynSDK;
 ```
 
 Initialize `spynSDK` by setting the `deal_id` in the Activity's `onCreate()`:
