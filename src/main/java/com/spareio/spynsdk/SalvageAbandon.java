@@ -34,20 +34,24 @@ public class SalvageAbandon extends AppCompatActivity {
         registerReceiver(receiver, filter);
 
         Intent intent = getIntent();
-        dealId = intent.getStringExtra(spynSDK.EXTRA_DEALID);
+        String dealId = intent.getStringExtra(spynSDK.EXTRA_DEALID);
 
-        spynSDK = new spynSDK(this, dealId);
-        if (spynSDK.isAppInstalled()) {
-            Intent intent2 = new Intent(getApplicationContext(), Success.class);
-            getApplication().startActivity(intent2);
-        }
+        spynSDK = new spynSDK.Builder()
+                .setDealId(dealId)
+                .setLang("en")
+                .setContext(this)
+                .create();
     }
 
     @Override
     public void onBackPressed() {
         Intent intent = getIntent();
         dealId = intent.getStringExtra(spynSDK.EXTRA_DEALID);
-        spynSDK spynSDK = new spynSDK(this, dealId);
+        spynSDK spynSDK = new spynSDK.Builder()
+                .setDealId(dealId)
+                .setLang("en")
+                .setContext(this)
+                .create();
         spynSDK.reject();
         super.onBackPressed();
     }
@@ -55,14 +59,18 @@ public class SalvageAbandon extends AppCompatActivity {
     public void acceptOffer(View view) {
         Intent intent = getIntent();
         dealId = intent.getStringExtra(spynSDK.EXTRA_DEALID);
-        spynSDK spynSDK = new spynSDK(this, dealId);
+        spynSDK spynSDK = new spynSDK.Builder()
+                .setDealId(dealId)
+                .setLang("en")
+                .setContext(this)
+                .create();
         spynSDK.accept();
         launchPlayStore(view);
     }
 
     public void closeOfferOverlay(View view) {
         try {
-            Intent intent = new Intent(this, Class.forName("com.spareio.hotspotshieldpartnerapp.MainActivity"));
+            Intent intent = new Intent(this, Class.forName("com.spareio.spynpartnerapp.MainActivity"));
             startActivity(intent);
         } catch (Exception e) {
             Log.d("Exception", e.toString());
@@ -72,7 +80,11 @@ public class SalvageAbandon extends AppCompatActivity {
     public void launchPlayStore(View view) {
         Intent intent = getIntent();
         dealId = intent.getStringExtra(spynSDK.EXTRA_DEALID);
-        spynSDK spynSDK = new spynSDK(this, dealId);
+        spynSDK spynSDK = new spynSDK.Builder()
+                .setDealId(dealId)
+                .setLang("en")
+                .setContext(this)
+                .create();
         String url = spynSDK.getPlaystoreUrl();
         Intent i = new Intent(Intent.ACTION_VIEW);
         i.setData(Uri.parse(url));

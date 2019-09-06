@@ -69,7 +69,6 @@
         android:layout_marginLeft="78dp"
         android:textColor="#CCFFFFFF"
         android:text="@string/interstitialRewardsBody"
-        android:lineSpacingMultiplier="1.2"
         android:fontFamily="@font/avenirnextbold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -97,7 +96,6 @@
         android:textSize="14sp"
         android:textColor="#CCFFFFFF"
         android:text="@string/interstitialCustomBody"
-        android:lineSpacingMultiplier="1.2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -123,7 +121,6 @@
         android:fontFamily="@font/avenirnextbold"
         android:textColor="#CCFFFFFF"
         android:text="@string/interstitialSearchBody"
-        android:lineSpacingMultiplier="1.2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -143,21 +140,16 @@
             android:layout_alignParentTop="true"
             android:layout_centerInParent="true" />
 
-        <Button
+        <ImageButton
             android:id="@+id/continueButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@null"
             android:onClick="acceptOffer"
             android:layout_centerInParent="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="20dp"
-            android:paddingBottom="6dp"
-            android:textStyle="bold"
-            android:text="@string/interstitialContinue"
-            android:background="@drawable/acceptbutton"
-            android:textColor="#000000"
-            android:textSize="16sp"
-            android:fontFamily="@font/avenirnextbold" />
+            android:paddingBottom="25dp"
+            app:srcCompat="@drawable/continuebutton" />
     </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>

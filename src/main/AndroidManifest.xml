@@ -2,9 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.spareio.spynsdk">
 
-    <application
-        android:allowBackup="true"
-        >
+    <application>
         <provider
             android:name=".SpynContentProvider"
             android:authorities="com.spareio.spynSDK.provider"

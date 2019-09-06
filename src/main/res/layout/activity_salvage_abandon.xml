@@ -79,21 +79,16 @@
                 android:textColor="#CCFFFFFF"
                 android:textSize="16sp" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/upgradeButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_centerInParent="true"
+                android:background="@null"
                 android:onClick="acceptOffer"
-                android:layout_marginBottom="20dp"
-                android:paddingBottom="6dp"
-                android:textStyle="bold"
-                android:text="@string/whoopsButtonText"
-                android:background="@drawable/acceptbutton"
-                android:textColor="#000000"
-                android:textSize="16sp"
-                android:fontFamily="@font/avenirnextltprobold" />
+                android:paddingBottom="50dp"
+                app:srcCompat="@drawable/upgradewithspyn" />
 
         </RelativeLayout>
 

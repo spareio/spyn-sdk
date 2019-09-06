@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -30,7 +31,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,11 +40,17 @@ import java.util.UUID;
 public class spynSDK {
 
     private Context mContext;
+
+    private Drawable icon;
+
+    private JSONObject worker = null;
+
     private String machineId = "";
     private String baseUrl = "https://x.devspare.io/api/v1/launcher/workers/";
+    private String dealUrl = "https://x.devspare.io/api/v1/launcher/deals/";
     private String dealId = "";
+    private String lang = "";
     private String packageName = "com.spare.spyn";
-    private JSONObject worker = null;
 
     private SharedPreferences preferences;
     private SharedPreferences.Editor editor;
@@ -54,8 +60,11 @@ public class spynSDK {
     public static final String AUTHORITY = "com.spareio.spynSDK.provider";
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + AUTHORITY);
 
-    public spynSDK(Context context, String dealId) {
-        mContext = context;
+    private spynSDK(final Builder builder) {
+        this.dealId = builder.dealId;
+        this.icon = builder.icon;
+        this.lang = builder.lang;
+        mContext = builder.context;
         setMachineId();
         this.dealId = dealId;
         preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
@@ -99,26 +108,6 @@ public class spynSDK {
         catch (PackageManager.NameNotFoundException e) {
             return false;
         }
-    }
-
-    public String getStatus() {
-        String[] eventsArray = getEvents();
-        String status = "";
-        if (Arrays.asList(eventsArray).contains("activated")) {
-            status = "activated";
-        } else if (Arrays.asList(eventsArray).contains("accepted")) {
-            status = "accepted";
-        } else if (Arrays.asList(eventsArray).contains("rejected")) {
-            status = "rejected";
-        } else if (Arrays.asList(eventsArray).contains("offered")) {
-            status = "offered";
-        } else if (Arrays.asList(eventsArray).contains("registered")) {
-            status = "registered";
-        } else {
-            status = "unknown";
-        }
-
-        return status;
     }
 
     // Fetch the machineId
@@ -240,27 +229,29 @@ public class spynSDK {
                         if (doOffer) {
                             String[] eventsArray = getEvents();
                             if (Arrays.asList(eventsArray).contains("activated")) {
-                                if (!isAppInstalled()) {
-                                    Intent intent = new Intent(mContext, Interstitial.class);
-                                    intent.putExtra(EXTRA_DEALID, dealId);
-                                    mContext.startActivity(intent);
-                                } else {
-                                    Log.d("Status", "It's activated");
-                                    Intent intent = new Intent(mContext, Success.class);
-                                    mContext.startActivity(intent);
-                                }
+                                Log.d("Message", "it is activated");
+                            } else {
+                                Log.d("Message", "it is not activated");
+                            }
 
+                            if (Arrays.asList(eventsArray).contains("activated")) {
+                                Log.d("Status", "It's activated");
+                                Intent intent = new Intent(mContext, Success.class);
+                                mContext.startActivity(intent);
                             } else if (Arrays.asList(eventsArray).contains("accepted")) {
                                 if (!isAppInstalled()) {
                                     // Show interstitial
+                                    Log.d("Status", "Accepted and not installed");
                                     Intent intent = new Intent(mContext, Interstitial.class);
                                     intent.putExtra(EXTRA_DEALID, dealId);
                                     mContext.startActivity(intent);
                                 } else {
+                                    Log.d("Status", "Accepted and installed");
                                     Intent intent = mContext.getPackageManager().getLaunchIntentForPackage("com.spare.spyn");
                                     mContext.startActivity(intent);
                                 }
                             } else {
+                                Log.d("Status", "else");
                                 Intent intent = new Intent(mContext, Interstitial.class);
                                 intent.putExtra(EXTRA_DEALID, dealId);
                                 mContext.startActivity(intent);
@@ -371,9 +362,42 @@ public class spynSDK {
                     @Override
                     public void onResponse(String response) {
                         // Display the first 500 characters of the response string.
-                        Log.d("Rejected", "Spare has been rejected");
+                        Log.d("Accepted", "Spare has been rejected");
                         showStatusMessage("Offer has been rejected by the user");
                         getWorkerFromAPI(false);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        String json;
+
+                        NetworkResponse response = error.networkResponse;
+                        if(response != null && response.data != null){
+                            switch(response.statusCode){
+                                case 400: case 412: case 404:
+                                    json = new String(response.data);
+                                    Log.w("Volley Error", json);
+                                    break;
+                            }
+                        }
+                    }
+                }
+        );
+        queue.add(stringRequest);
+    }
+
+    // Call the deal endpoint
+    public void getDeal() {
+        String url = dealUrl + dealId;
+        RequestQueue queue = Volley.newRequestQueue(mContext);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // Display the first 500 characters of the response string.
+                        Log.d("DealInfo", response);
                     }
                 },
                 new Response.ErrorListener() {
@@ -512,6 +536,43 @@ public class spynSDK {
             return CONTENT_URI.buildUpon()
                     .appendPath(Long.toString(id))
                     .build();
+        }
+    }
+
+    // Builder class
+    public static class Builder {
+
+        private String lang;
+        private String dealId;
+        private Drawable icon;
+        private Context context;
+
+        public Builder setLang(final String lang) {
+            this.lang = lang;
+            return this;
+        }
+
+        public Builder setDealId(final String dealId) {
+            this.dealId = dealId;
+            return this;
+        }
+
+        public Builder setIcon(final Drawable icon) {
+            this.icon = icon;
+            return this;
+        }
+
+        public Builder setContext(final Context context) {
+            this.context = context;
+            return this;
+        }
+
+        public spynSDK create() {
+            spynSDK spynSDK = new spynSDK(this);
+            if (spynSDK.mContext == null) {
+                throw new IllegalStateException("Context cannot be empty");
+            }
+            return spynSDK;
         }
     }
 }
