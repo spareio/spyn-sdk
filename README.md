@@ -46,7 +46,12 @@ private spynSDK spynSDK
 Initialize `spynSDK` by setting the `deal_id` in the Activity's `onCreate()`:
 
 ```java
-spynSDK = new spynSDK(this,"deal_id");
+spynSDK = new spynSDK.Builder()
+        .setIcon(getApplicationInfo().loadIcon(getPackageManager())) // sets the app icon
+        .setDealId("deal_id") //sets the deal ID
+        .setLang("en") // sets the language
+        .setContext(this) // sets the context
+        .create();
 ```
 
 ## Offering Spyn
