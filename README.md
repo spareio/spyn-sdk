@@ -2,6 +2,10 @@
 
 Spyn Android SDK allows you to offer Spyn Launcher in your own app. SpynSDK is our Android module which will allow your Android app to communicate with Spyn.
 
+# Help
+
+Integration questions can be answered by email (contact@spare.io) or by slack channel (request an invite from your account manager).
+
 # Installation
 
 - Download the [latest release](https://github.com/spareio/spyn-sdk/releases) of SpynSDK
@@ -38,7 +42,7 @@ Initialize `spynSDK` by setting the `deal_id` in the Activity's `onCreate()`:
 
 ```java
 spynSDK = new spynSDK.Builder()
-        .setIcon(getApplicationInfo().loadIcon(getPackageManager())) // sets the app icon
+        .setIcon(getApplicationInfo().loadIcon(getPackageManager())) // sets the interstitial screen icon to your app icon
         .setDealId("deal_id") //sets the deal ID
         .setLang("en") // sets the language
         .setContext(this) // sets the context
@@ -103,9 +107,3 @@ Spyn uses an sqlite database locally on each device to store information about t
 </manifest>
 ```
 
-
-# Example
-
-# Changelog
-
-- All notable changes to this project will be documented in [changelog document](https://github.com/spareio/spynsdk/blob/master/CHANGELOG.md).
