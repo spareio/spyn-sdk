@@ -39,16 +39,15 @@
             android:layout_height="300dp"
             android:background="#00FFFFFF">
 
-
             <ImageView
                 android:id="@+id/whoopsGraphic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="64dp"
-                android:layout_marginTop="68dp"
+                android:layout_marginTop="20dp"
                 android:background="#00FFFFFF"
                 android:src="@drawable/whoopsgraphic"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:layout_conversion_absoluteHeight="164dp"
                 tools:layout_conversion_absoluteWidth="276dp" />
@@ -57,24 +56,31 @@
                 android:id="@+id/partnerLogo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintHorizontal_chainStyle="spread"
-                app:layout_constraintHorizontal_weight="50"
-                app:layout_constraintStart_toStartOf="@+id/guideline2"
-                app:layout_constraintTop_toTopOf="@+id/guideline3" />
+                android:paddingEnd="70dp"
+                android:paddingBottom="22dp"
+                app:layout_constraintBottom_toBottomOf="@id/whoopsGraphic"
+                app:layout_constraintEnd_toStartOf="@id/guideline"/>
 
             <android.support.constraint.Guideline
-                android:id="@+id/guideline2"
+                android:id="@+id/guideline"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_begin="86dp" />
+                app:layout_constraintGuide_percent="0.5" />
 
-            <android.support.constraint.Guideline
-                android:id="@+id/guideline3"
+            <TextView
+                android:id="@+id/whoopsTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintGuide_begin="167dp" />
+                android:paddingTop="25dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/whoopsGraphic"
+                android:fontFamily="@font/avenirnextbold"
+                android:text="@string/whoopsTitle"
+                android:textColor="#FFFFFF"
+                android:textSize="32sp" />
+
 
         </android.support.constraint.ConstraintLayout>
 
@@ -87,20 +93,8 @@
             android:layout_centerHorizontal="true">
 
             <TextView
-                android:id="@+id/whoopsTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_centerInParent="true"
-                android:layout_marginTop="265dp"
-                android:fontFamily="@font/avenirnextbold"
-                android:text="@string/whoopsTitle"
-                android:textColor="#FFFFFF"
-                android:textSize="32sp" />
-
-            <TextView
                 android:id="@+id/whoopsText"
-                android:layout_width="320dp"
+                android:layout_width="300dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_centerInParent="true"
@@ -113,7 +107,7 @@
 
             <Button
                 android:id="@+id/upgradeButton"
-                android:layout_width="wrap_content"
+                android:layout_width="320dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_centerInParent="true"
