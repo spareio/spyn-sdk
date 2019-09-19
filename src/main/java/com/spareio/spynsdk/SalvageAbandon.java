@@ -117,7 +117,6 @@ public class SalvageAbandon extends AppCompatActivity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d("DEBUG"," test for application install/uninstall");
             if (spynSDK.isAppInstalled()) {
                 Intent newintent = new Intent(getApplicationContext(), Success.class);
                 startActivity(newintent);

@@ -83,7 +83,6 @@ public class spynSDK {
     }
 
     public void salvageAbandon() {
-        Log.d("Message", "In salvageabandon");
         offer();
         Intent intent = new Intent(mContext, SalvageAbandon.class);
         mContext.startActivity(intent);
@@ -192,8 +191,6 @@ public class spynSDK {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-                            // Do something here once we have the response
-                            Log.d("Registration",  response.toString());
                             response.put("worker_id", getMachineId());
                             editor.putString("worker", response.toString());
                             editor.commit();
@@ -303,7 +300,6 @@ public class spynSDK {
 
     // Make Offered call
     public void offer() {
-        Log.d("Message", "In offer");
         String url = baseUrl + getMachineId() + "/offered/?secret=" + getSecret();
         RequestQueue queue = Volley.newRequestQueue(mContext);
 
