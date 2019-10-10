@@ -1,5 +1,4 @@
 # Spyn Android SDK
-
 Spyn Android SDK allows you to offer Spyn Launcher in your own app. SpynSDK is our Android module which will allow your Android app to communicate with Spyn.
 
 # Help
@@ -8,53 +7,55 @@ Integration questions can be answered by email (contact@spare.io) or by slack ch
 
 # Installation
 
-- Download the [latest release](https://github.com/spareio/spyn-sdk/releases) of SpynSDK
-
-- Import SpynSDK module
-
-  <kbd>File</kbd> + <kbd>New</kbd> + <kbd>Import Module</kbd>  >  Select SpynSDK folder
-
-
-- Add SpynSDK Salvage Abandon screen so your android apps manifest files
-
-  ```xml
-  <activity android:name="com.spareio.spynsdk.SalvageAbandon"> </activity>
+- Open project level gradle and make following changes
+```appgradle
+allprojects {
+		repositories {
+			...
+			maven { url 'https://jitpack.io' }
+		}
+	}
   ```
+- Open Project level gradle and make following changes
+```projectlevel
+dependencies {
+		implementation 'com.github.User:Repo:0.0.5'
+	}
+```
+# Initialisation
+- Create Application class or Open if you have already. 
+You can find more details to create application class from here https://github.com/codepath/android_guides/wiki/Understanding-the-Android-Application-Class
+
+Make Following changes :
+```
+public class MyApplication extends Application {
+
+    public static String dealId = "place your deal id here";
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+          Spyn.initSpyn(null, dealId, "en", this);
+    }
+
+}
+```
 
 # Usage Overview
 
-Before you can start the initialization of Spyn SDK, you must first set the Spyn SDK with your `deal id` from your [Partner Portal](https://spare.io).
-
-You must first import SpynSDK in your `Activity` file
+You can start using it now. Whenver necessary get instance of spyne and call the functions.
 
 ```java
-import com.spareio.spynsdk.Success;
-import com.spareio.spynsdk.spynSDK;
+Spyn.getInstance();
 ```
 
-Create a `spynSDK` variable that will be used throughout the code in the desired Activity file
-
-```java
-private spynSDK spynSDK;
-```
-
-Initialize `spynSDK` by setting the `deal_id` in the Activity's `onCreate()`:
-
-```java
-spynSDK = new spynSDK.Builder()
-        .setIcon(getApplicationInfo().loadIcon(getPackageManager())) // sets the interstitial screen icon to your app icon
-        .setDealId("deal_id") //sets the deal ID
-        .setLang("en") // sets the language
-        .setContext(this) // sets the context
-        .create();
-```
 
 ## Offering Spyn
 
 Offering Spyn is the process in which the user will be prompted to Install Spyn Launcher in order to unlock a specific reward. When and where you decide to offer Spyn is up to you, and can be fully customizable. You can launch the Spyn offer flow using the `offerSpyn` function:
 
 ```java
-spynSDK.offerSpyn();
+Spyn.getInstance().offerSpyn();
 ```
 
 Once the Spyn offer process is initiated with the function above. The SpynSDK takes over and will guide the user through out install flow. Currently the SpynSDK has 2 installation flow:
@@ -91,7 +92,7 @@ void onPurchasesUpdated(BillingResult billingResult, List<Purchase> purchases) {
             handlePurchase(purchase);
         }
     } else if (billingResult.getResponseCode() == BillingResponse.USER_CANCELED) {
-        spynSDK.salvageAbandon();
+        Spyn.getInstance().salvageAbandon();
     } else {
         // Handle any other error codes.
     }
